@@ -98,13 +98,15 @@ public class Network {
         }
         return count;
     }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Network:\n");
         for (int i = 0; i < userCount; i++) {
-            sb.append(users[i].toString()).append("\n");
+            sb.append(users[i].getName()).append(" -> ");
+            for (int j = 0; j < users[i].getfCount(); j++) {
+                sb.append(users[i].getfFollows()[j]).append(" ");
+            }
+            sb.append("\n");
         }
-        return sb.toString().trim();
+        return sb.toString();
     }
 }

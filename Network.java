@@ -121,13 +121,16 @@ public class Network {
         StringBuilder sb = new StringBuilder("Network:");
         for (int i = 0; i < userCount; i++) {
             sb.append("\n").append(users[i].getName()).append(" -> ");
-            for (int j = 0; j < users[i].getfCount(); j++) {
-                sb.append(users[i].getfFollows()[j]).append(" ");
-            }
-            if (sb.charAt(sb.length() - 1) == ' ') {
+            if (users[i].getfCount() > 0) {
+                for (int j = 0; j < users[i].getfCount(); j++) {
+                    sb.append(users[i].getfFollows()[j]).append(" ");
+                }
                 sb.deleteCharAt(sb.length() - 1); 
+            } else {
+                sb.append(" "); 
             }
         }
         return sb.toString();
     }
+    
 }

@@ -23,7 +23,6 @@ public class Network {
         users[2] = new User("Baz");
         userCount = 3;
     }
-
     public int getUserCount() {
         return this.userCount;
     }
@@ -38,7 +37,6 @@ public class Network {
         }
         return null;
     }
-
     /** Adds a new user with the given name to this network.
      *  If this network is full, does nothing and returns false.
      *  If the given name is already a user in this network, does nothing and returns false.
@@ -50,7 +48,6 @@ public class Network {
         users[userCount++] = new User(name);
         return true;
     }
-
     /** Makes the user with name1 follow the user with name2. If successful, returns true.
      *  If any of the two names is not a user in this network, or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
@@ -68,7 +65,6 @@ public class Network {
         if (user == null) {
             return null;
         }
-
         HashMap<String, Integer> mutualFollowees = new HashMap<>();
         for (String followee : user.getFollows()) {
             User followeeUser = getUser(followee);
@@ -80,7 +76,6 @@ public class Network {
                 }
             }
         }
-
         String recommendation = null;
         int maxCount = 0;
         for (String candidate : mutualFollowees.keySet()) {
@@ -92,19 +87,18 @@ public class Network {
         }
         return recommendation;
     }
-
     /** Computes and returns the name of the most popular user in this network: 
      *  The user who appears the most in the follow lists of all the users. */
     public String mostPopularUser() {
         HashMap<String, Integer> popularity = new HashMap<>();
+
         for (int i = 0; i < userCount; i++) {
-            for (String followee : users[i].getFollows()) {
-                if (followee != null) {
-                    popularity.put(followee, popularity.getOrDefault(followee, 0) + 1);
-                }
+            String[] followees = users[i].getFollows();
+            for (String followee : followees) {
+                String normalized = followee.toLowerCase();
+                popularity.put(normalized, popularity.getOrDefault(normalized, 0) + 1);
             }
         }
-
         String mostPopular = null;
         int maxCount = 0;
         for (String user : popularity.keySet()) {
@@ -113,9 +107,12 @@ public class Network {
                 mostPopular = user;
             }
         }
-        return mostPopular;
-    }
 
+        if (mostPopular != null) {
+            return mostPopular.substring(0, 1).toUpperCase() + mostPopular.substring(1);
+        }
+        return null;
+    }
     /** Returns the number of times that the given name appears in the follows lists of all
      *  the users in this network. Note: A name can appear 0 or 1 times in each list. */
     private int followeeCount(String name) {
@@ -127,17 +124,14 @@ public class Network {
         }
         return count;
     }
-
     /** Returns a textual description of all the users in this network, and who they follow. */
     public String toString() {
         StringBuilder sb = new StringBuilder("Network:\n");
         for (int i = 0; i < userCount; i++) {
-            sb.append(users[i].toString().stripTrailing()).append("\n");
+            sb.append(users[i].toString().trim()).append("\n");
         }
-        return sb.toString().stripTrailing();
+        return sb.toString().trim();
     }
-
-    /** Represents a user in a social network. */
     public static class User {
         private static final int maxfCount = 10;
         private String name;
@@ -177,19 +171,53 @@ public class Network {
             }
             return false;
         }
+
         public boolean addFollowee(String name) {
-            if (fCount < maxfCount && !follows(name)) {
-                follows[fCount++] = name;
-                return true;
+            if (fCount >= maxfCount) {
+                return false;
+            }
+            if (follows(name)) {
+                return false;
+            }
+            follows[fCount] = name;
+            fCount++;
+            return true;
+        }
+
+        public boolean removeFollowee(String name) {
+            for (int i = 0; i < fCount; i++) {
+                if (follows[i].equalsIgnoreCase(name)) {
+                    for (int j = i; j < fCount - 1; j++) {
+                        follows[j] = follows[j + 1];
+                    }
+                    follows[fCount - 1] = null;
+                    fCount--;
+                    return true;
+                }
             }
             return false;
         }
-        public String toString() {
-            StringBuilder ans = new StringBuilder(name + " -> ");
+
+        public int countMutual(User other) {
+            int mutualCount = 0;
             for (int i = 0; i < fCount; i++) {
-                ans.append(follows[i]).append(" ");
+                if (other.follows(follows[i])) {
+                    mutualCount++;
+                }
             }
-            return ans.toString().stripTrailing();
+            return mutualCount;
+        }
+
+        public boolean isFriendOf(User other) {
+            return countMutual(other) > 0;
+        }
+
+        public String toString() {
+            StringBuilder sb = new StringBuilder(name + " -> ");
+            for (int i = 0; i < fCount; i++) {
+                sb.append(follows[i]).append(" ");
+            }
+            return sb.toString().trim();
         }
     }
 }

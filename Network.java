@@ -173,25 +173,19 @@ public class Network {
         }
 
         public boolean addFollowee(String name) {
-            if (fCount >= maxfCount) {
+            if (fCount >= maxfCount || follows(name)) {
                 return false;
             }
-            if (follows(name)) {
-                return false;
-            }
-            follows[fCount] = name;
-            fCount++;
+            follows[fCount++] = name;
             return true;
         }
-
         public boolean removeFollowee(String name) {
             for (int i = 0; i < fCount; i++) {
                 if (follows[i].equalsIgnoreCase(name)) {
                     for (int j = i; j < fCount - 1; j++) {
                         follows[j] = follows[j + 1];
                     }
-                    follows[fCount - 1] = null;
-                    fCount--;
+                    follows[--fCount] = null;
                     return true;
                 }
             }
@@ -200,14 +194,13 @@ public class Network {
 
         public int countMutual(User other) {
             int mutualCount = 0;
-            for (int i = 0; i < fCount; i++) {
-                if (other.follows(follows[i])) {
+            for (String followee : this.getFollows()) {
+                if (followee != null && other.follows(followee)) {
                     mutualCount++;
                 }
             }
             return mutualCount;
         }
-
         public boolean isFriendOf(User other) {
             return countMutual(other) > 0;
         }
@@ -215,9 +208,10 @@ public class Network {
         public String toString() {
             StringBuilder sb = new StringBuilder(name + " -> ");
             for (int i = 0; i < fCount; i++) {
-                sb.append(follows[i]).append(" ");
+                sb.append(follows[i]);
+                if (i < fCount - 1) sb.append(" ");
             }
-            return sb.toString().trim();
+            return sb.toString();
         }
     }
 }

@@ -1,84 +1,96 @@
-/** Represents a user in a social network. A user is characterized by a name,
- *  a list of user names that s/he follows, and the list's size. */
- public class User {
+/** Represents a user in a social network. */
+public class User {
+    static int maxfCount = 10; // Maximum number of users a user can follow
 
-    // Maximum number of users that a user can follow
-    static int maxfCount = 10;
-
-    private String name;       // name of this user
-    private String[] follows;  // array of user names that this user follows
-    private int fCount;        // actual number of followees (must be <= maxfCount)
+    private String name;       // Name of this user
+    private String[] follows;  // Array of usernames that this user follows
+    private int fCount;        // Actual number of followees (must be <= maxfCount)
 
     /** Creates a user with an empty list of followees. */
     public User(String name) {
         this.name = name;
-        follows = new String[maxfCount]; // fixed-size array for storing followees
-        fCount = 0;                      // initial number of followees
+        this.follows = new String[maxfCount];
+        this.fCount = 0;
     }
 
-    /** Creates a user with some followees. The only purpose of this constructor is 
-     *  to allow testing the toString and follows methods, before implementing other methods. */
+    /** Creates a user with some followees for testing purposes. */
     public User(String name, boolean gettingStarted) {
         this(name);
-        follows[0] = "Foo";
-        follows[1] = "Bar";
-        follows[2] = "Baz";
-        fCount = 3;
+        if (gettingStarted) {
+            this.addFollowee("Foo");
+            this.addFollowee("Bar");
+            this.addFollowee("Baz");
+        }
     }
 
-    /** Returns the name of this user. */
     public String getName() {
         return name;
     }
 
-    /** Returns the follows array. */
-    public String[] getfFollows() {
-        return follows;
-    }
-
-    /** Returns the number of users that this user follows. */
     public int getfCount() {
         return fCount;
     }
 
-    /** If this user follows the given name, returns true; otherwise returns false. */
-    public boolean follows(String name) {
-        //// Replace the following statement with your code
-        return false;
-    }
-    /** Makes this user follow the given name. If successful, returns true. 
-     *  If this user already follows the given name, or if the follows list is full, does nothing and returns false; */
-    public boolean addFollowee(String name) {
-        //// Replace the following statement with your code
-        return false;
+    public String[] getfFollows() {
+        return follows;
     }
 
-    /** Removes the given name from the follows list of this user. If successful, returns true.
-     *  If the name is not in the list, does nothing and returns false. */
-    public boolean removeFollowee(String name) {
-        //// Replace the following statement with your code
-        return false;
-    }
-
-    /** Counts the number of users that both this user and the other user follow.
-    /*  Notice: This is the size of the intersection of the two follows lists. */
-    public int countMutual(User other) {
-         //// Replace the following statement with your code
-        return 0;
-    }
-
-    /** Checks is this user is a friend of the other user.
-     *  (if two users follow each other, they are said to be "friends.") */
-    public boolean isFriendOf(User other) {
-        //// Replace the following statement with your code
-        return false;
-    }
-    /** Returns this user's name, and the names that s/he follows. */
-    public String toString() {
-        String ans = name + " -> ";
+    /** Checks if this user follows a given username. */
+    public boolean follows(String username) {
+        if (username == null) return false;
         for (int i = 0; i < fCount; i++) {
-            ans = ans + follows[i] + " ";
+            if (follows[i].equalsIgnoreCase(username)) {
+                return true;
+            }
         }
-        return ans;
+        return false;
+    }
+
+    /** Adds a new followee. */
+    public boolean addFollowee(String username) {
+        if (username == null || follows(username) || fCount >= maxfCount) {
+            return false;
+        }
+        follows[fCount++] = username;
+        return true;
+    }
+
+    /** Removes a followee. */
+    public boolean removeFollowee(String username) {
+        for (int i = 0; i < fCount; i++) {
+            if (follows[i].equalsIgnoreCase(username)) {
+                follows[i] = follows[--fCount]; // Replace with the last followee
+                follows[fCount] = null;        // Nullify the last slot
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Counts mutual followees with another user. */
+    public int countMutual(User other) {
+        if (other == null) return 0;
+
+        int mutualCount = 0;
+        for (int i = 0; i < fCount; i++) {
+            if (other.follows(follows[i])) {
+                mutualCount++;
+            }
+        }
+        return mutualCount;
+    }
+
+    /** Checks if two users are mutual friends. */
+    public boolean isFriendOf(User other) {
+        return other != null && this.follows(other.getName()) && other.follows(this.getName());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(name + " -> ");
+        for (int i = 0; i < fCount; i++) {
+            sb.append(follows[i]).append(" ");
+        }
+        return sb.toString().trim();
     }
 }

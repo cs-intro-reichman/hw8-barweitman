@@ -123,12 +123,12 @@ public class Network {
             sb.append("\n").append(users[i].getName()).append(" -> ");
             if (users[i].getfCount() > 0) {
                 for (int j = 0; j < users[i].getfCount(); j++) {
-                    sb.append(users[i].getfFollows()[j]).append(" ");
+                    sb.append(users[i].getfFollows()[j]);
                 }
                 sb.deleteCharAt(sb.length() - 1); 
-            } else {
-                sb.append(" "); 
-            }
+            } 
+            //else {
+              //  sb.append(" "); 
         }
         return sb.toString();
     }

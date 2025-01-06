@@ -1,13 +1,19 @@
-/** Represents a social network. */
+import java.util.HashMap;
+/** Represents a social network. The network has users, who follow other users.
+ *  Each user is an instance of the User class. */
 public class Network {
-    private User[] users;  // Array of users in this network
-    private int userCount; // Number of users in the network
+    // Fields
+    private User[] users;   // the users in this network (an array of User objects)
+    private int userCount; // actual number of users in this network
 
+    /** Creates a network with a given maximum number of users. */
     public Network(int maxUserCount) {
         this.users = new User[maxUserCount];
         this.userCount = 0;
     }
 
+    /** Creates a network with some users. The only purpose of this constructor is 
+     *  to allow testing the toString and getUser methods, before implementing other methods. */
     public Network(int maxUserCount, boolean gettingStarted) {
         this(maxUserCount);
         if (gettingStarted) {
@@ -21,7 +27,9 @@ public class Network {
         return this.userCount;
     }
 
-    /** Finds a user by name. */
+    /** Finds in this network, and returns, the user that has the given name.
+     *  If there is no such user, returns null.
+     *  Notice that the method receives a String, and returns a User object. */
     public User getUser(String name) {
         if (name == null) return null;
         for (int i = 0; i < userCount; i++) {
@@ -32,7 +40,10 @@ public class Network {
         return null;
     }
 
-    /** Adds a user to the network. */
+    /** Adds a new user with the given name to this network.
+    *  If this network is full, does nothing and returns false;
+    *  If the given name is already a user in this network, does nothing and returns false;
+    *  Otherwise, creates a new user with the given name, adds the user to this network, and returns true. */
     public boolean addUser(String name) {
         if (name == null || getUser(name) != null || userCount >= users.length) {
             return false;
@@ -41,7 +52,9 @@ public class Network {
         return true;
     }
 
-    /** Adds a followee relationship between two users. */
+    /** Makes the user with name1 follow the user with name2. If successful, returns true.
+     *  If any of the two names is not a user in this network,
+     *  or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
         User user1 = getUser(name1);
         User user2 = getUser(name2);
@@ -51,7 +64,8 @@ public class Network {
         return user1.addFollowee(name2);
     }
 
-    /** Recommends a user to follow based on mutual followees. */
+    /** For the user with the given name, recommends another user to follow. The recommended user is
+     *  the user that has the maximal mutual number of followees as the user with the given name. */
     public String recommendWhoToFollow(String name) {
         User user = getUser(name);
         if (user == null) return null;
@@ -72,7 +86,8 @@ public class Network {
         return recommendation;
     }
 
-    /** Finds the most popular user in the network. */
+    /** Computes and returns the name of the most popular user in this network: 
+     *  The user who appears the most in the follow lists of all the users. */
     public String mostPopularUser() {
         String mostPopular = null;
         int maxFollowers = 0;
@@ -88,7 +103,8 @@ public class Network {
         return mostPopular;
     }
 
-    /** Counts the number of followers of a user. */
+    /** Returns the number of times that the given name appears in the follows lists of all
+     *  the users in this network. Note: A name can appear 0 or 1 times in each list. */
     private int followeeCount(String name) {
         int count = 0;
         for (int i = 0; i < userCount; i++) {
@@ -98,14 +114,19 @@ public class Network {
         }
         return count;
     }
+
+    /** Returns a textual description of all the users in this network, and who they follow. */
+    /** Returns a textual description of all the users in this network, and who they follow. */
     public String toString() {
-        StringBuilder sb = new StringBuilder("Network:\n");
+        StringBuilder sb = new StringBuilder("Network:");
         for (int i = 0; i < userCount; i++) {
-            sb.append(users[i].getName()).append(" -> ");
+            sb.append("\n").append(users[i].getName()).append(" -> ");
             for (int j = 0; j < users[i].getfCount(); j++) {
                 sb.append(users[i].getfFollows()[j]).append(" ");
             }
-            sb.append("\n");
+            if (sb.charAt(sb.length() - 1) == ' ') {
+                sb.deleteCharAt(sb.length() - 1); 
+            }
         }
         return sb.toString();
     }

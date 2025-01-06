@@ -40,9 +40,9 @@ public class Network {
     }
 
     /** Adds a new user with the given name to this network.
-    *  If ths network is full, does nothing and returns false;
-    *  If the given name is already a user in this network, does nothing and returns false;
-    *  Otherwise, creates a new user with the given name, adds the user to this network, and returns true. */
+     *  If this network is full, does nothing and returns false.
+     *  If the given name is already a user in this network, does nothing and returns false.
+     *  Otherwise, creates a new user with the given name, adds the user to this network, and returns true. */
     public boolean addUser(String name) {
         if (userCount >= users.length || getUser(name) != null) {
             return false;
@@ -52,8 +52,7 @@ public class Network {
     }
 
     /** Makes the user with name1 follow the user with name2. If successful, returns true.
-     *  If any of the two names is not a user in this network,
-     *  or if the "follows" addition failed for some reason, returns false. */
+     *  If any of the two names is not a user in this network, or if the "follows" addition failed for some reason, returns false. */
     public boolean addFollowee(String name1, String name2) {
         User user1 = getUser(name1);
         User user2 = getUser(name2);
@@ -62,9 +61,9 @@ public class Network {
         }
         return user1.addFollowee(name2);
     }
-    
-    /** For the user with the given name, recommends another user to follow. The recommended user is
-     *  the user that has the maximal mutual number of followees as the user with the given name. */
+
+    /** For the user with the given name, recommends another user to follow. 
+     *  The recommended user is the user with the maximal mutual number of followees as the user with the given name. */
     public String recommendWhoToFollow(String name) {
         User user = getUser(name);
         if (user == null) {
@@ -94,7 +93,6 @@ public class Network {
 
         return recommendation;
     }
-
 
     /** Computes and returns the name of the most popular user in this network: 
      *  The user who appears the most in the follow lists of all the users. */
@@ -133,7 +131,7 @@ public class Network {
         return count;
     }
 
-    // Returns a textual description of all the users in this network, and who they follow.
+    /** Returns a textual description of all the users in this network, and who they follow. */
     public String toString() {
         StringBuilder sb = new StringBuilder("Network:\n");
         for (int i = 0; i < userCount; i++) {
@@ -142,7 +140,8 @@ public class Network {
         return sb.toString();
     }
 
-    private static class User {
+    /** Represents a user in a social network. */
+    public static class User {
         static int maxfCount = 10; // Maximum number of users that a user can follow
         private String name; // name of this user
         private String[] follows; // array of user names that this user follows

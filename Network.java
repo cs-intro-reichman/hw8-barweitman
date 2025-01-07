@@ -118,19 +118,14 @@ public class Network {
     /** Returns a textual description of all the users in this network, and who they follow. */
     /** Returns a textual description of all the users in this network, and who they follow. */
     public String toString() {
-        StringBuilder sb = new StringBuilder("Network:");
+        String result = "Network:";
         for (int i = 0; i < userCount; i++) {
-            sb.append("\n").append(users[i].getName()).append(" -> ");
+            result += "\n" + users[i].getName() + " ->";
             if (users[i].getfCount() > 0) {
-                for (int j = 0; j < users[i].getfCount(); j++) {
-                    sb.append(users[i].getfFollows()[j]);
-                }
-                sb.deleteCharAt(sb.length() - 1); 
-            } 
-            //else {
-              //  sb.append(" "); 
+                String follows = String.join(" ", users[i].getfFollows());
+                result += " " + follows;
+            }
         }
-        return sb.toString();
+        return result;
     }
-    
 }

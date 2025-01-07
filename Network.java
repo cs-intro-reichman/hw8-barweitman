@@ -120,10 +120,14 @@ public class Network {
     public String toString() {
         String result = "Network:";
         for (int i = 0; i < userCount; i++) {
-            result += "\n" + users[i].getName() + " ->";
-            if (users[i].getfCount() > 0) {
-                String follows = String.join(" ", users[i].getfFollows());
-                result += " " + follows;
+            result += "\n" + users[i].getName() + " -> ";
+            String[] followees = users[i].getfFollows();
+            int followeeCount = users[i].getfCount();
+            for (int j = 0; j < followeeCount; j++) {
+                result += followees[j];
+                if (j < followeeCount - 1) { 
+                    result += " ";
+                }
             }
         }
         return result;

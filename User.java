@@ -87,10 +87,10 @@ public class User {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(name + " -> ");
+        String result = name + " ->";
         for (int i = 0; i < fCount; i++) {
-            sb.append(follows[i]).append(" ");
+            result += " " + follows[i];
         }
-        return sb.toString().trim();
+        return result;
     }
 }
